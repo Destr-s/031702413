@@ -15,6 +15,7 @@ public class Main {
     public String myThirdAddress="区|县|市";
     public String myForthAddress="街道|镇|乡";
     public String myFifthAddress="路|街|巷";
+    public String mySixthAddress="号";
     public  void setName(String _name){
         name=_name;
     }
@@ -110,11 +111,11 @@ public class Main {
         if(matcher.find()){
             second=matcher.group();
             //System.out.println("second="+second);
-            res.s=res.s.substring(second.length(),res.s.length()-1);
+            res.s=res.s.substring(second.length(),res.s.length());
             second +='市';
             //System.out.println("second="+second);
             if(res.s.charAt(0)=='市'){
-                res.s=res.s.substring(1,res.s.length()-1);
+                res.s=res.s.substring(1,res.s.length());
             }
         }
         res.address[2]=second;
@@ -138,25 +139,12 @@ public class Main {
             }
 
             third=res.s.substring(0,index+1);
-            res.s=res.s.substring(index+1,res.s.length()-1);
+            res.s=res.s.substring(index+1,res.s.length());
         }
         res.address[3]=third;
         return res;
     }
     public Main getForthAddress(Main res){
-        String fifth="";
-        Pattern pattern=Pattern.compile(myFifthAddress);
-        Matcher matcher=pattern.matcher(res.s);
-        if(matcher.find()){
-            fifth=matcher.group();
-            String[] ss=res.s.split(myFifthAddress);
-            fifth=ss[0]+fifth;
-            res.s=ss[1];
-        }
-        res.address[4]=fifth;
-        return res;
-    }
-    public Main getFifthAddress(Main res){
         String forth="";
         Pattern pattern=Pattern.compile(myForthAddress);
         Matcher matcher=pattern.matcher(res.s);
@@ -165,9 +153,35 @@ public class Main {
             String[] ss=res.s.split(myForthAddress);
             forth=ss[0]+forth;
             res.s=ss[1];
+        }
+        res.address[4]=forth;
+        return res;
+    }
+    public Main getFifthAddress(Main res){
+        String fifth="";
+        Pattern pattern=Pattern.compile(myFifthAddress);
+        Matcher matcher=pattern.matcher(res.s);
+        if(matcher.find()){
+            fifth=matcher.group();
+            String[] ss=res.s.split(myFifthAddress);
+            fifth=ss[0]+fifth;
+            res.s=ss[1];
 
         }
-        res.address[5]=forth;
+        res.address[5]=fifth;
+        return res;
+    }
+    public Main getSixthAddress(Main res){
+        String sixth="";
+        Pattern pattern=Pattern.compile(mySixthAddress);
+        Matcher matcher=pattern.matcher(res.s);
+        if(matcher.find()){
+            sixth=matcher.group();
+            String[] ss=res.s.split(mySixthAddress);
+            sixth=ss[0]+sixth;
+            res.s=ss[1];
+        }
+        res.address[6]=sixth;
         return res;
     }
     public static void main(String[] args) throws IOException{
@@ -175,6 +189,7 @@ public class Main {
         ans.init();
         String ss=ans.readFile();
         System.out.println(ss);
+        System.out.println(ss.length());
         String[] address=ss.split("\n");
         for(String loop:address){
             ans.s=loop;
@@ -188,7 +203,7 @@ public class Main {
             String[] s1=ans.s.split("\\d{11}");
             ans.s=s1[0]+s1[1];
             String[] s2=ans.s.split(",");
-            char level=ans.s.charAt(0);//获取难度等级
+            char level=s1[0].charAt(0);//获取难度等级
             //System.out.println(level);
             String _name="";
             for(int i=2;i<s2[0].length();i++){
@@ -203,7 +218,14 @@ public class Main {
                 ans=ans.getSecondAddress(ans);
                 ans=ans.getThirdAddress(ans);
                 ans=ans.getForthAddress(ans);
-                ans.address[5]=ans.s.substring(0,ans.s.length()-2);
+                //ans.address[5]=ans.s.substring(0,ans.s.length()-1);
+                System.out.println(ans.address[1]);
+                System.out.println(ans.address[2]);
+                System.out.println(ans.address[3]);
+                System.out.println(ans.address[4]);
+                //System.out.println(ans.address[5]);
+                System.out.println(ans.s);
+                System.out.println(ans.s.length());
             }//1!难度  提取五级地址
             if(level=='2')
             {
@@ -212,13 +234,16 @@ public class Main {
                 ans=ans.getThirdAddress(ans);
                 ans=ans.getForthAddress(ans);
                 ans=ans.getFifthAddress(ans);
+                ans=ans.getSixthAddress(ans);
                 System.out.println(ans.address[1]);
                 System.out.println(ans.address[2]);
                 System.out.println(ans.address[3]);
                 System.out.println(ans.address[4]);
                 System.out.println(ans.address[5]);
+                System.out.println(ans.address[6]);
                 System.out.println(ans.s);
             }//二级难度  提取七级地址
+
 
 
         }
