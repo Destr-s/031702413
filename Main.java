@@ -186,12 +186,13 @@ public class Main {
     }
     public static void main(String[] args) throws IOException{
         Main ans =new Main();//用于保存答案
-        ans.init();
+
         String ss=ans.readFile();
-        System.out.println(ss);
-        System.out.println(ss.length());
+        //System.out.println(ss);
+        //System.out.println(ss.length());
         String[] address=ss.split("\n");
         for(String loop:address){
+            ans.init();
             ans.s=loop;
             Pattern pattern=Pattern.compile("\\d{11}");
             Matcher matcher=pattern.matcher(ans.s);
@@ -218,14 +219,18 @@ public class Main {
                 ans=ans.getSecondAddress(ans);
                 ans=ans.getThirdAddress(ans);
                 ans=ans.getForthAddress(ans);
-                //ans.address[5]=ans.s.substring(0,ans.s.length()-1);
+                for(int i=0;i<ans.s.length();i++)
+                {
+                    if(ans.s.charAt(i)=='.')break;
+                    ans.address[5]+=ans.s.charAt(i);
+                }
                 System.out.println(ans.address[1]);
                 System.out.println(ans.address[2]);
                 System.out.println(ans.address[3]);
                 System.out.println(ans.address[4]);
-                //System.out.println(ans.address[5]);
-                System.out.println(ans.s);
-                System.out.println(ans.s.length());
+                System.out.println(ans.address[5]);
+               // System.out.println(ans.s);
+                //System.out.println(ans.s.length());
             }//1!难度  提取五级地址
             if(level=='2')
             {
@@ -235,13 +240,19 @@ public class Main {
                 ans=ans.getForthAddress(ans);
                 ans=ans.getFifthAddress(ans);
                 ans=ans.getSixthAddress(ans);
+                for(int i=0;i<ans.s.length();i++)
+                {
+                    if(ans.s.charAt(i)=='.')break;
+                    ans.address[7]+=ans.s.charAt(i);
+                }
                 System.out.println(ans.address[1]);
                 System.out.println(ans.address[2]);
                 System.out.println(ans.address[3]);
                 System.out.println(ans.address[4]);
                 System.out.println(ans.address[5]);
                 System.out.println(ans.address[6]);
-                System.out.println(ans.s);
+                System.out.println(ans.address[7]);
+                //System.out.println(ans.s);
             }//二级难度  提取七级地址
 
 
