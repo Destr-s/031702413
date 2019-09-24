@@ -1,5 +1,7 @@
-package com.address;
+package address;
 import java.io.*;
+import java.io.IOException;
+import com.google.gson.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +32,7 @@ public class Main {
         for(int i=0;i<=8;i++)
             address[i]="";
     }
-    public static String readFile() throws IOException{
+    public String readFile() throws IOException{
         String inputPath="D:\\IDEA2019\\IdeaProject\\addressbook\\input.txt";
         File file=new File(inputPath);
         FileReader reader =new FileReader(file);
@@ -43,7 +45,7 @@ public class Main {
         reader.close();
         return st;
     }//从文件中读取注释
-    public  Main getFirstAddress(Main res){//提取一级地址
+    private  Main getFirstAddress(Main res){//提取一级地址
         String first="";
         Pattern pattern1=Pattern.compile(myFirstAddress);
         Matcher matcher1=pattern1.matcher(res.s);
@@ -62,31 +64,31 @@ public class Main {
                 }
             }
             else if(first.equals("黑龙江"))
-           {
-               if(res.s.charAt(3)=='省')
-               {
-                   first+=res.s.charAt(3);
-                   res.s=res.s.substring(4,res.s.length()-1);
-               }
-               else
-               {
-                   first+='省';
-                   res.s=res.s.substring(3,res.s.length()-1);
-               }
-           }
-           else
-           {
-               //System.out.println(3);
-               if(res.s.charAt(2)=='省'){
-                   first+='省';
-                   res.s=res.s.substring(3,res.s.length()-1);
-               }
-               else
-               {
-                   first+='省';
-                   res.s=res.s.substring(2,res.s.length()-1);
-               }
-           }
+            {
+                if(res.s.charAt(3)=='省')
+                {
+                    first+=res.s.charAt(3);
+                    res.s=res.s.substring(4,res.s.length()-1);
+                }
+                else
+                {
+                    first+='省';
+                    res.s=res.s.substring(3,res.s.length()-1);
+                }
+            }
+            else
+            {
+                //System.out.println(3);
+                if(res.s.charAt(2)=='省'){
+                    first+='省';
+                    res.s=res.s.substring(3,res.s.length()-1);
+                }
+                else
+                {
+                    first+='省';
+                    res.s=res.s.substring(2,res.s.length()-1);
+                }
+            }
         }
         Pattern pattern2=Pattern.compile("自治区");
         Matcher matcher2=pattern2.matcher(res.s);
@@ -99,7 +101,7 @@ public class Main {
         res.address[1]=first;
         return res;
     }
-    public  Main getSecondAddress(Main res){//提取二级地址
+    private  Main getSecondAddress(Main res){//提取二级地址
         if(res.address[1].equals("上海")||res.address[1].equals("北京")||res.address[1].equals("天津"))
         {
             res.address[2]=res.address[1]+'市';
@@ -121,7 +123,7 @@ public class Main {
         res.address[2]=second;
         return res;
     }
-    public Main getThirdAddress(Main res){
+    private Main getThirdAddress(Main res){
 
         String third="";
         Pattern pattern=Pattern.compile(myThirdAddress);
@@ -144,7 +146,7 @@ public class Main {
         res.address[3]=third;
         return res;
     }
-    public Main getForthAddress(Main res){
+    private Main getForthAddress(Main res){
         String forth="";
         Pattern pattern=Pattern.compile(myForthAddress);
         Matcher matcher=pattern.matcher(res.s);
@@ -157,7 +159,7 @@ public class Main {
         res.address[4]=forth;
         return res;
     }
-    public Main getFifthAddress(Main res){
+    private Main getFifthAddress(Main res){
         String fifth="";
         Pattern pattern=Pattern.compile(myFifthAddress);
         Matcher matcher=pattern.matcher(res.s);
@@ -171,7 +173,7 @@ public class Main {
         res.address[5]=fifth;
         return res;
     }
-    public Main getSixthAddress(Main res){
+    private Main getSixthAddress(Main res){
         String sixth="";
         Pattern pattern=Pattern.compile(mySixthAddress);
         Matcher matcher=pattern.matcher(res.s);
@@ -184,6 +186,14 @@ public class Main {
         res.address[6]=sixth;
         return res;
     }
+    public void writeFile(JsonArray arr) throws IOException{
+        String outPutPath="D:\\IDEA2019\\IdeaProject\\addressbook\\output.txt";
+        File file=new File(outPutPath);
+        FileWriter writer=new FileWriter(file);
+        writer.write(arr.toString());
+        writer.flush();
+        writer.close();
+    }
     public static void main(String[] args) throws IOException{
         Main ans =new Main();//用于保存答案
 
@@ -191,6 +201,7 @@ public class Main {
         //System.out.println(ss);
         //System.out.println(ss.length());
         String[] address=ss.split("\n");
+        JsonArray ansarr=new JsonArray();
         for(String loop:address){
             ans.init();
             ans.s=loop;
@@ -213,6 +224,10 @@ public class Main {
             ans.setName(_name);
             //System.out.println(ans.name);
             ans.s=s2[1];
+            JsonObject object=new JsonObject();
+            object.addProperty("姓名",ans.name);
+            object.addProperty("手机",ans.phoneNumber);
+            JsonArray array=new JsonArray();
             if(level=='1')
             {
                 ans=ans.getFirstAddress(ans);
@@ -224,13 +239,10 @@ public class Main {
                     if(ans.s.charAt(i)=='.')break;
                     ans.address[5]+=ans.s.charAt(i);
                 }
-                System.out.println(ans.address[1]);
-                System.out.println(ans.address[2]);
-                System.out.println(ans.address[3]);
-                System.out.println(ans.address[4]);
-                System.out.println(ans.address[5]);
-               // System.out.println(ans.s);
-                //System.out.println(ans.s.length());
+                for(int i=1;i<=5;i++)
+                {
+                    array.add(ans.address[i]);
+                }
             }//1!难度  提取五级地址
             if(level=='2')
             {
@@ -245,18 +257,15 @@ public class Main {
                     if(ans.s.charAt(i)=='.')break;
                     ans.address[7]+=ans.s.charAt(i);
                 }
-                System.out.println(ans.address[1]);
-                System.out.println(ans.address[2]);
-                System.out.println(ans.address[3]);
-                System.out.println(ans.address[4]);
-                System.out.println(ans.address[5]);
-                System.out.println(ans.address[6]);
-                System.out.println(ans.address[7]);
-                //System.out.println(ans.s);
+                for(int i=1;i<=7;i++)
+                {
+                    array.add(ans.address[i]);
+                }
             }//二级难度  提取七级地址
-
-
-
+            object.add("地址",array);
+            ansarr.add(object);
         }
+        //System.out.println(ansarr.toString());
+        ans.writeFile(ansarr);
     }
 }
