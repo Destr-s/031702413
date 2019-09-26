@@ -32,6 +32,8 @@ public class Main {
         for(int i=0;i<=8;i++)
             address[i]="";
     }
+
+
     public String readFile() throws IOException{
         String inputPath="D:\\IDEA2019\\IdeaProject\\addressbook\\input.txt";
         File file=new File(inputPath);
@@ -44,8 +46,22 @@ public class Main {
         }
         reader.close();
         return st;
-    }//从文件中读取注释
-    private  Main getFirstAddress(Main res){//提取一级地址
+    }//从文件中读取数据
+
+    public void writeFile(JsonArray arr) throws IOException{
+        String outPutPath="D:\\IDEA2019\\IdeaProject\\addressbook\\output.txt";
+        File file=new File(outPutPath);
+        FileWriter writer=new FileWriter(file);
+        String ansjon=arr.toString();
+        JsonParser jsonParser=new JsonParser();
+        JsonArray jsonArray=jsonParser.parse(ansjon).getAsJsonArray();
+        Gson gson=new GsonBuilder().setPrettyPrinting().create();
+        writer.write(gson.toJson(jsonArray));
+        writer.flush();
+        writer.close();
+    }//向文件中写入结果
+
+    public  Main getFirstAddress(Main res){
         String first="";
         Pattern pattern1=Pattern.compile(myFirstAddress);
         Matcher matcher1=pattern1.matcher(res.s);
@@ -100,8 +116,9 @@ public class Main {
         }
         res.address[1]=first;
         return res;
-    }
-    private  Main getSecondAddress(Main res){//提取二级地址
+    }//提取一级地址
+
+    public  Main getSecondAddress(Main res){
         if(res.address[1].equals("上海")||res.address[1].equals("北京")||res.address[1].equals("天津"))
         {
             res.address[2]=res.address[1]+'市';
@@ -122,8 +139,9 @@ public class Main {
         }
         res.address[2]=second;
         return res;
-    }
-    private Main getThirdAddress(Main res){
+    }//提取二级地址
+
+    public Main getThirdAddress(Main res){
 
         String third="";
         Pattern pattern=Pattern.compile(myThirdAddress);
@@ -145,8 +163,9 @@ public class Main {
         }
         res.address[3]=third;
         return res;
-    }
-    private Main getForthAddress(Main res){
+    }//提取三级地址
+
+    public Main getForthAddress(Main res){
         String forth="";
         Pattern pattern=Pattern.compile(myForthAddress);
         Matcher matcher=pattern.matcher(res.s);
@@ -158,8 +177,9 @@ public class Main {
         }
         res.address[4]=forth;
         return res;
-    }
-    private Main getFifthAddress(Main res){
+    }//提取四级地址
+
+    public Main getFifthAddress(Main res){
         String fifth="";
         Pattern pattern=Pattern.compile(myFifthAddress);
         Matcher matcher=pattern.matcher(res.s);
@@ -172,8 +192,9 @@ public class Main {
         }
         res.address[5]=fifth;
         return res;
-    }
-    private Main getSixthAddress(Main res){
+    }//提取五级地址
+
+    public Main getSixthAddress(Main res){
         String sixth="";
         Pattern pattern=Pattern.compile(mySixthAddress);
         Matcher matcher=pattern.matcher(res.s);
@@ -185,21 +206,12 @@ public class Main {
         }
         res.address[6]=sixth;
         return res;
-    }
-    public void writeFile(JsonArray arr) throws IOException{
-        String outPutPath="D:\\IDEA2019\\IdeaProject\\addressbook\\output.txt";
-        File file=new File(outPutPath);
-        FileWriter writer=new FileWriter(file);
-        writer.write(arr.toString());
-        writer.flush();
-        writer.close();
-    }
+    }//提取六级地址
+
     public static void main(String[] args) throws IOException{
         Main ans =new Main();//用于保存答案
 
         String ss=ans.readFile();
-        //System.out.println(ss);
-        //System.out.println(ss.length());
         String[] address=ss.split("\n");
         JsonArray ansarr=new JsonArray();
         for(String loop:address){
@@ -222,7 +234,6 @@ public class Main {
                 _name+=s2[0].charAt(i);
             }//提取姓名
             ans.setName(_name);
-            //System.out.println(ans.name);
             ans.s=s2[1];
             JsonObject object=new JsonObject();
             object.addProperty("姓名",ans.name);
@@ -265,7 +276,6 @@ public class Main {
             object.add("地址",array);
             ansarr.add(object);
         }
-        //System.out.println(ansarr.toString());
         ans.writeFile(ansarr);
     }
 }
