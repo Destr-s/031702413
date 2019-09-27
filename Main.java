@@ -2,6 +2,8 @@ package address;
 import java.io.*;
 import java.io.IOException;
 import com.google.gson.*;
+
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +38,7 @@ public class Main {
 
     public String readFile(String inputPath) throws IOException{
         File file=new File(inputPath);
-        FileReader reader =new FileReader(file);
+        BufferedReader reader= new BufferedReader(new InputStreamReader(new FileInputStream(file),StandardCharsets.UTF_8));
         char[] ch=new char[10000];
         reader.read(ch);
         String st="";
@@ -51,7 +53,8 @@ public class Main {
         File file=new File(outPutPath);
         if(!file.exists())
             file.createNewFile();
-        FileWriter writer=new FileWriter(file);
+        BufferedWriter writer=
+                new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),StandardCharsets.UTF_8));
         String ansjon=arr.toString();
         JsonParser jsonParser=new JsonParser();
         JsonArray jsonArray=jsonParser.parse(ansjon).getAsJsonArray();
