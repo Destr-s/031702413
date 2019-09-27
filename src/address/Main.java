@@ -34,8 +34,7 @@ public class Main {
     }
 
 
-    public String readFile() throws IOException{
-        String inputPath="D:\\IDEA2019\\IdeaProject\\addressbook\\input.txt";
+    public String readFile(String inputPath) throws IOException{
         File file=new File(inputPath);
         FileReader reader =new FileReader(file);
         char[] ch=new char[10000];
@@ -48,9 +47,10 @@ public class Main {
         return st;
     }//从文件中读取数据
 
-    public void writeFile(JsonArray arr) throws IOException{
-        String outPutPath="D:\\IDEA2019\\IdeaProject\\addressbook\\output.txt";
+    public void writeFile(JsonArray arr,String outPutPath) throws IOException{
         File file=new File(outPutPath);
+        if(!file.exists())
+            file.createNewFile();
         FileWriter writer=new FileWriter(file);
         String ansjon=arr.toString();
         JsonParser jsonParser=new JsonParser();
@@ -211,7 +211,7 @@ public class Main {
     public static void main(String[] args) throws IOException{
         Main ans =new Main();//用于保存答案
 
-        String ss=ans.readFile();
+        String ss=ans.readFile(args[1]);
         String[] address=ss.split("\n");
         JsonArray ansarr=new JsonArray();
         for(String loop:address){
@@ -276,6 +276,6 @@ public class Main {
             object.add("地址",array);
             ansarr.add(object);
         }
-        ans.writeFile(ansarr);
+        ans.writeFile(ansarr,args[2]);
     }
 }
