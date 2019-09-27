@@ -212,7 +212,7 @@ public class Main {
     public static void main(String[] args) throws IOException{
         Main ans =new Main();//用于保存答案
         JsonArray ansarr=new JsonArray();
-        File file=new File(args[1]);
+        File file=new File(args[0]);
         BufferedReader reader= new BufferedReader(new InputStreamReader(new FileInputStream(file),StandardCharsets.UTF_8));
         String loop;
         while((loop=reader.readLine())!=null){
@@ -283,6 +283,6 @@ public class Main {
             ansarr.add(object);
         }
         reader.close();
-        ans.writeFile(ansarr,args[2]);
+        ans.writeFile(ansarr,args[1]);
     }
 }
