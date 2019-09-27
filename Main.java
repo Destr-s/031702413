@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
+    private int sum=0;
     private String phoneNumber="";
     private String name="";
     private String s="";
@@ -35,31 +36,17 @@ public class Main {
             address[i]="";
     }
 
-
-    public String readFile(String inputPath) throws IOException{
-        File file=new File(inputPath);
-        BufferedReader reader= new BufferedReader(new InputStreamReader(new FileInputStream(file),StandardCharsets.UTF_8));
-        char[] ch=new char[10000];
-        reader.read(ch);
-        String st="";
-        for(char c:ch){
-            st+=c;
-        }
-        reader.close();
-        return st;
-    }//从文件中读取数据
-
     public void writeFile(JsonArray arr,String outPutPath) throws IOException{
         File file=new File(outPutPath);
         if(!file.exists())
             file.createNewFile();
         BufferedWriter writer=
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),StandardCharsets.UTF_8));
-        //String ansjon=arr.toString();
-        //JsonParser jsonParser=new JsonParser();
-        //JsonArray jsonArray=jsonParser.parse(ansjon).getAsJsonArray();
-        //Gson gson=new GsonBuilder().setPrettyPrinting().create();
-        writer.write(arr.toString());
+        String ansjon=arr.toString();
+        JsonParser jsonParser=new JsonParser();
+        JsonArray jsonArray=jsonParser.parse(ansjon).getAsJsonArray();
+        Gson gson=new GsonBuilder().setPrettyPrinting().create();
+        writer.write(gson.toJson(jsonArray));
         writer.flush();
         writer.close();
     }//向文件中写入结果
@@ -205,6 +192,17 @@ public class Main {
             sixth=matcher.group();
             String[] ss=res.s.split(mySixthAddress);
             sixth=ss[0]+sixth;
+            int flag=0;
+            for(String sss:ss){
+                flag++;
+            }
+            if(flag<2)
+            {
+                //System.out.println(ss[0]);
+                //System.out.println(res.sum);
+                res.s=".";
+                return res;
+            }
             res.s=ss[1];
         }
         res.address[6]=sixth;
@@ -213,11 +211,12 @@ public class Main {
 
     public static void main(String[] args) throws IOException{
         Main ans =new Main();//用于保存答案
-
-        String ss=ans.readFile(args[1]);
-        String[] address=ss.split("\n");
         JsonArray ansarr=new JsonArray();
-        for(String loop:address){
+        File file=new File(args[1]);
+        BufferedReader reader= new BufferedReader(new InputStreamReader(new FileInputStream(file),StandardCharsets.UTF_8));
+        String loop;
+        while((loop=reader.readLine())!=null){
+            ans.sum++;
             ans.init();
             ans.s=loop;
             Pattern pattern=Pattern.compile("\\d{11}");
@@ -228,7 +227,10 @@ public class Main {
             }//寻找手机号并提取出来
             //System.out.println(ans.phoneNumber);
             String[] s1=ans.s.split("\\d{11}");
-            ans.s=s1[0]+s1[1];
+            ans.s="";
+            for(String sss:s1){
+                ans.s+=sss;
+            }
             String[] s2=ans.s.split(",");
             char level=s1[0].charAt(0);//获取难度等级
             //System.out.println(level);
@@ -239,6 +241,7 @@ public class Main {
             ans.setName(_name);
             ans.s=s2[1];
             JsonObject object=new JsonObject();
+            object.addProperty("level",level);
             object.addProperty("姓名",ans.name);
             object.addProperty("手机",ans.phoneNumber);
             JsonArray array=new JsonArray();
@@ -258,7 +261,7 @@ public class Main {
                     array.add(ans.address[i]);
                 }
             }//1!难度  提取五级地址
-            if(level=='2')
+            if(level=='2'||level=='3')
             {
                 ans=ans.getFirstAddress(ans);
                 ans=ans.getSecondAddress(ans);
@@ -279,6 +282,7 @@ public class Main {
             object.add("地址",array);
             ansarr.add(object);
         }
+        reader.close();
         ans.writeFile(ansarr,args[2]);
     }
 }
