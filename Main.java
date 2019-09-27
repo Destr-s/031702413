@@ -55,11 +55,11 @@ public class Main {
             file.createNewFile();
         BufferedWriter writer=
                 new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),StandardCharsets.UTF_8));
-        String ansjon=arr.toString();
-        JsonParser jsonParser=new JsonParser();
-        JsonArray jsonArray=jsonParser.parse(ansjon).getAsJsonArray();
-        Gson gson=new GsonBuilder().setPrettyPrinting().create();
-        writer.write(gson.toJson(jsonArray));
+        //String ansjon=arr.toString();
+        //JsonParser jsonParser=new JsonParser();
+        //JsonArray jsonArray=jsonParser.parse(ansjon).getAsJsonArray();
+        //Gson gson=new GsonBuilder().setPrettyPrinting().create();
+        writer.write(arr.toString());
         writer.flush();
         writer.close();
     }//向文件中写入结果
